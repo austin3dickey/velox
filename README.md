@@ -13,7 +13,7 @@ SQL parser, a dataframe layer, or a query optimizer, it is usually not meant
 to be used directly by end-users; rather, it is mostly used by developers
 integrating and optimizing their compute engines.
 
-Velox provides the following high-level components: 
+Velox provides the following high-level components:
 
 * **Type**: a generic typing system that supports scalar, complex, and nested
   types, such as structs, maps, arrays, tensors, etc.
