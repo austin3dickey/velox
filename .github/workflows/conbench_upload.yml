@@ -159,8 +159,8 @@ jobs:
     - name: Create a GitHub Check benchmark report on the contender comment, and if merge-commit, a comment on the merged PR
       env:
         CONBENCH_URL: "https://velox-conbench.voltrondata.run/"
-        GITHUB_APP_ID: "${{ secrets.GITHUB_APP_ID }}"
-        GITHUB_APP_PRIVATE_KEY: "${{ secrets.GITHUB_APP_PRIVATE_KEY }}"
+        GITHUB_APP_ID: "${{ secrets.GH_APP_ID }}"
+        GITHUB_APP_PRIVATE_KEY: "${{ secrets.GH_APP_PRIVATE_KEY }}"
       run: |
         ./velox/scripts/benchmark-alert.py \
           --contender-sha "${{ steps.download.outputs.contender_sha }}" \
