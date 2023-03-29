@@ -16,10 +16,12 @@
 import argparse
 import os
 from pprint import pprint
+import re
 from typing import Optional, Tuple
 
 import benchalerts.pipeline_steps as steps
 from benchalerts import AlertPipeline
+import requests
 
 DESCRIPTION = """
 Analyze benchmark runs, post a GitHub Check whether there were regressions or not, and
@@ -87,6 +89,20 @@ def _merge_commit_pr_number(commit_message: str) -> Optional[int]:
       find the one that's associated with this commit. This does work but actually feels
       *more* likely to break than grepping.
     """
+    if not commit_message:
+        print("Merge-commit message not given; this must be a PR commit")
+        return None
+
+    # Look for e.g. (#123) at the end of the first line
+    res = re.search(r"\(#(\d+)\)$", commit_message.split("\n")[0])
+
+    if not res:
+        print("Could not find the PR number in the following merge-commit message:")
+        print(commit_message)
+        return None
+
+    print(f"Found a match: {repr(res[1])}")
+    return int(res[1])
 
 
 def main(
@@ -121,6 +137,17 @@ def main(
     pprint(pipeline.run_pipeline())
 
 
+def test_grepping():
+    """This is never called. Use for local dev."""
+    _merge_commit_pr_number("")
+
+    for commit in requests.get(
+        "https://api.github.com/repos/facebookincubator/velox/commits"
+    ).json():
+        print(commit["sha"][:7])
+        _merge_commit_pr_number(commit["commit"]["message"])
+
+
 if __name__ == "__main__":
     (
         repo,
@@ -137,3 +164,5 @@ if __name__ == "__main__":
         merge_commit_message=merge_commit_message,
         z_score_threshold=z_score_threshold,
     )
+
+    # test_grepping()
